@@ -1,0 +1,22 @@
+{
+    "cSpell.words": [
+        "adam",
+        "crossentropy",
+        "figsize",
+        "keras",
+        "labelsize",
+        "openpyxl",
+        "relu",
+        "softmax",
+        "tensorflow",
+        "vala",
+        "xlabel",
+        "xtick",
+        "ylabel",
+        "ytick"
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "python.formatting.provider": "none"
+}
