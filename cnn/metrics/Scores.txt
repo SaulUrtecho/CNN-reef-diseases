@@ -1,0 +1,7 @@
+Accuracy Score: 1.0
+
+Recall Score: [1. 1. 1. 1. 1. 1.]
+
+Precision Score TP/(TP + FP): [1. 1. 1. 1. 1. 1.]
+
+F1 Score: [1. 1. 1. 1. 1. 1.]

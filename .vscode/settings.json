@@ -1,19 +1,28 @@
 {
     "cSpell.words": [
         "adam",
+        "arange",
+        "argmax",
+        "cmap",
+        "colorbar",
         "crossentropy",
         "figsize",
+        "imshow",
         "keras",
+        "labelpad",
         "labelsize",
         "openpyxl",
         "relu",
         "softmax",
         "tensorflow",
         "vala",
+        "Valueindex",
         "xlabel",
         "xtick",
+        "xticks",
         "ylabel",
-        "ytick"
+        "ytick",
+        "yticks"
     ],
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"

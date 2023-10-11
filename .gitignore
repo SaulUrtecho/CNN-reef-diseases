@@ -1,2 +1,3 @@
 cnn/data/
-cnn/model/
+cnn/model/model.h5
+cnn/model/weights.h5
