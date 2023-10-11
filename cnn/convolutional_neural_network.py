@@ -1,5 +1,11 @@
+from keras.layers import (
+    Conv2D,
+    MaxPooling2D,
+    Dropout,
+    Dense,
+    Flatten,
+)
 from keras.preprocessing.image import ImageDataGenerator
-from keras.layers import Conv2D, MaxPooling2D, Dropout, Dense, Flatten
 from keras.models import Sequential
 from keras import backend as K
 import os
