@@ -13,7 +13,7 @@ import numpy as np
 import seaborn as sns
 
 testPath = "./cnn/data/test"  # It contains 150 images
-modelo = load_model("./cnn/model/model.h5")
+model = load_model("./cnn/model/model.h5")
 
 # We use the class ImageDataGenerator since our model was trained using generators
 valGenerated = ImageDataGenerator(rescale=1.0 / 255)
@@ -27,20 +27,18 @@ valGenerator = valGenerated.flow_from_directory(
     shuffle=False,
 )
 
-predict = modelo.predict(
-    valGenerator, verbose=1
-)  # This line returns a 2D matrix with the probabilities of each prediction
+# This line returns a 2D matrix with the probabilities of each prediction
+predict = model.predict(valGenerator, verbose=1)
 
-print("El tamaño del generador es: ", len(predict))  # Show the array's predictions size
+print("The generator size is: ", len(predict))  # Show the array's predictions size
 print(predict)
 
 
 resultPredicted = []
 for i in predict:
     maxValueindex = np.argmax(i)
-    resultPredicted.append(
-        maxValueindex
-    )  # We obtain the index of the predictions in a 2D array
+    # We obtain the index of the predictions in a 2D array
+    resultPredicted.append(maxValueindex)
 
 print(len(resultPredicted))
 print(resultPredicted)
@@ -123,5 +121,5 @@ plt.yticks(tick_marks, classNames)
 for fila in range(6):
     for columna in range(6):
         plt.text(columna, fila, str(cm[fila][columna]))
-plt.savefig("./cnn/metrics/MatrizConfusion.png")
+plt.savefig("./cnn/metrics/Confusion_matrix.png")
 plt.show()
