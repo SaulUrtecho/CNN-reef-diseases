@@ -8,12 +8,15 @@
         "crossentropy",
         "figsize",
         "fromarray",
+        "imread",
         "imshow",
+        "initializers",
         "keras",
         "labelpad",
         "labelsize",
         "openpyxl",
         "relu",
+        "saul",
         "softmax",
         "tensorflow",
         "vala",
@@ -29,5 +32,8 @@
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter"
     },
-    "python.formatting.provider": "none"
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": ["--line-length", "120"],
+    "python.linting.enabled": true
+
 }
