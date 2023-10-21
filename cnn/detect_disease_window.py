@@ -3,10 +3,12 @@ import tensorflow as tf
 from keras.preprocessing.image import load_img, img_to_array
 from keras.models import load_model
 from keras.initializers import glorot_uniform
-from tkinter import Tk, Label, Button
+from tkinter import Tk, Label, Button, ttk
+import tkinter as tk
 import re
 from logic_window_manager import LogicWindowManager
 from os import path
+
 
 # Image size used
 width, height = 256, 256
@@ -16,6 +18,8 @@ itmLogoPath = "./cnn/logo.jpg"
 modelPath = "/home/saul/Documents/CNN-reef-diseases/cnn/model/model.h5"
 weightsPath = "/home/saul/Documents/CNN-reef-diseases/cnn/model/weights.h5"
 testImagesPath = "/home/saul/Documents/CNN-reef-diseases/cnn/test_images"
+curvesPath = '/home/saul/Documents/CNN-reef-diseases/cnn/model/results_graph.png'
+matrixPath = '/home/saul/Documents/CNN-reef-diseases/cnn/metrics/Confusion_matrix.png'
 count = 0  # With this count we manage the elimination of select another image button
 
 
@@ -25,14 +29,67 @@ class DetectDiseaseWindow(LogicWindowManager):
         self.mainWindow.title("Detection of diseases in marine corals")
         self.mainWindow.geometry("600x500+450+100")
         self.mainWindow.resizable(False, False)
-        self.selectImageLabel = Label(self.mainWindow, text="Select image to evaluate: ")
+        style = ttk.Style()
+        style.theme_use('clam')
+        style.map('TNotebook.Tab', background=[('selected', 'gold1'), ('!selected', 'gold3')])
+        self.tabManager = ttk.Notebook(self.mainWindow)
+        self.tab1 = tk.Frame(self.tabManager, bg='firebrick4')
+        self.tab2 = tk.Frame(self.tabManager, bg='firebrick4')
+        self.tabManager.add(self.tab1, text='Testing')
+        self.tabManager.add(self.tab2, text='Results about model')
+        self.tabManager.pack(expand=1, fill="both")
+        self.firstTabWidgets()
+        self.secondTabWidgets()
+        self.mainWindow.mainloop()
+
+    # we define the initial widgets for first tab
+    def firstTabWidgets(self):
+        self.selectImageLabel = Label(self.tab1, text="Select image to evaluate: ", bg='firebrick4')
+        self.selectImageLabel.config(fg='white')
         self.selectImageLabel.pack()
-        self.selectImageButton = Button(self.mainWindow, text="Select image", command=self.selectImage)
+        self.selectImageButton = Button(self.tab1, text="Select image", command=self.selectImage, width=20)
         self.selectImageButton.pack()
         self.configuredLogo = super().configureImage(itmLogoPath)
-        self.itmLogoWindowImage = Label(self.mainWindow, image=self.configuredLogo)
+        self.itmLogoWindowImage = Label(self.tab1, image=self.configuredLogo)
         self.itmLogoWindowImage.pack(side="bottom")
-        self.mainWindow.mainloop()
+
+    # we define the initial widgets for second tab
+    def secondTabWidgets(self):
+        self.curvesLabel = Label(self.tab2, text="Loss & accuracy curves: ", bg='firebrick4')
+        self.curvesLabel.config(fg='white')
+        self.curvesLabel.place(x=50, y=50)
+        self.curvesButton = Button(self.tab2, text="Show", command=self.showCurves, width=20)
+        self.curvesButton.place(x=50, y=75)
+        self.matrixLabel = Label(self.tab2, text="Confusion matrix graph (25 samples used): ", bg='firebrick4')
+        self.matrixLabel.config(fg='white')
+        self.matrixLabel.place(x=300, y=50)
+        self.matrixButton = Button(self.tab2, text="Show", command=self.showConfusionMatrix, width=20)
+        self.matrixButton.place(x=360, y=75)
+        self.recordsLabel = Label(self.tab2, text="Records for each epoch (.xlsx): ", bg='firebrick4')
+        self.recordsLabel.config(fg='white')
+        self.recordsLabel.place(x=50, y=150)
+        self.recordsButton = Button(self.tab2, text="Show", command=self.showTrainingRecords, width=20)
+        self.recordsButton.place(x=50, y=175)
+        self.finalResultsLabel = Label(self.tab2, text="Final results: ", font='sans 12 bold', bg='firebrick4')
+        self.finalResultsLabel.config(fg='white')
+        self.finalResultsLabel.place(x=360, y=150)
+        self.finalResultsButton = Button(self.tab2, text="Show", command=self.showFinalResults, width=20)
+        self.finalResultsButton.place(x=360, y=175)
+        self.logoSecondTab = super().configureImage(itmLogoPath)
+        self.itmLogoSecondTab = Label(self.tab2, image=self.logoSecondTab)
+        self.itmLogoSecondTab.pack(side="bottom")
+
+    def showCurves(self):
+        super().showImagesResult(curvesPath, 'Loss & accuracy curves')
+
+    def showConfusionMatrix(self):
+        super().showImagesResult(matrixPath, 'Confusion matrix')
+
+    def showTrainingRecords(self):
+        pass
+
+    def showFinalResults(self):
+        pass
 
     # Select image method
     def selectImage(self):
@@ -51,13 +108,13 @@ class DetectDiseaseWindow(LogicWindowManager):
                     if count > 0:
                         super().deleteWidgets(self.selectAnotherImageButton)
                     self.configuredImage = super().configureImage(self.selectedImage)
-                    self.makePredictionButton = Button(self.mainWindow,text="Detect health status",command=self.makePrediction)
+                    self.makePredictionButton = Button(self.tab1,text="Detect health status",command=self.makePrediction, width=20)
                     self.makePredictionButton.pack()
 
-                    self.selectAnotherImageButton = Button(self.mainWindow,text="Select another image",command=self.selectAnotherImage)
+                    self.selectAnotherImageButton = Button(self.tab1,text="Select another image",command=self.selectAnotherImage, width=20)
                     self.selectAnotherImageButton.pack()
                     if mainWindowImage is True:
-                        self.mainWindowImage = Label(self.mainWindow, image=self.configuredImage)
+                        self.mainWindowImage = Label(self.tab1, image=self.configuredImage)
                         self.mainWindowImage.pack(side="bottom")
                 # if the given file is not a valid image format throw a alert
                 else:
@@ -87,54 +144,54 @@ class DetectDiseaseWindow(LogicWindowManager):
         if result == 0:
             print(result)
             super().makePrediction("Number five detected","The fifth number",secondaryWindowImage,self.configuredImage)
-            self.newDetectionButton = Button(self.mainWindow, text="New detection", command=self.cleanMainWindow)
+            self.newDetectionButton = Button(self.tab1, text="New detection", command=self.cleanMainWindow, width=20)
             self.newDetectionButton.pack()
-            self.closeButton = Button(self.mainWindow, text="Exit", command=self.closeMainWindow)
+            self.closeButton = Button(self.tab1, text="Exit", command=self.closeMainWindow, width=20)
             self.closeButton.pack()
             super().insertWidgets(self.itmLogoWindowImage)
             self.mainWindow.mainloop()
         elif result == 1:
             print(result)
             super().makePrediction("Number four detected","The fourth number",secondaryWindowImage,self.configuredImage)
-            self.newDetectionButton = Button(self.mainWindow, text="New detection", command=self.cleanMainWindow)
+            self.newDetectionButton = Button(self.tab1, text="New detection", command=self.cleanMainWindow, width=20)
             self.newDetectionButton.pack()
-            self.closeButton = Button(self.mainWindow, text="Exit", command=self.closeMainWindow)
+            self.closeButton = Button(self.tab1, text="Exit", command=self.closeMainWindow, width=20)
             self.closeButton.pack()
             super().insertWidgets(self.itmLogoWindowImage)
             self.mainWindow.mainloop()
         elif result == 2:
             print(result)
             super().makePrediction("None", "there is no number", secondaryWindowImage, self.configuredImage)
-            self.newDetectionButton = Button(self.mainWindow, text="New detection", command=self.cleanMainWindow)
+            self.newDetectionButton = Button(self.tab1, text="New detection", command=self.cleanMainWindow, width=20)
             self.newDetectionButton.pack()
-            self.closeButton = Button(self.mainWindow, text="Exit", command=self.closeMainWindow)
+            self.closeButton = Button(self.tab1, text="Exit", command=self.closeMainWindow, width=20)
             self.closeButton.pack()
             super().insertWidgets(self.itmLogoWindowImage)
             self.mainWindow.mainloop()
         elif result == 3:
             print(result)
             super().makePrediction("Number one detected","The first number",secondaryWindowImage,self.configuredImage)
-            self.newDetectionButton = Button(self.mainWindow, text="New detection", command=self.cleanMainWindow)
+            self.newDetectionButton = Button(self.tab1, text="New detection", command=self.cleanMainWindow, width=20)
             self.newDetectionButton.pack()
-            self.closeButton = Button(self.mainWindow, text="Exit", command=self.closeMainWindow)
+            self.closeButton = Button(self.tab1, text="Exit", command=self.closeMainWindow, width=20)
             self.closeButton.pack()
             super().insertWidgets(self.itmLogoWindowImage)
             self.mainWindow.mainloop()
         elif result == 4:
             print(result)
             super().makePrediction("Number three detected","The third number",secondaryWindowImage,self.configuredImage)
-            self.newDetectionButton = Button(self.mainWindow, text="New detection", command=self.cleanMainWindow)
+            self.newDetectionButton = Button(self.tab1, text="New detection", command=self.cleanMainWindow, width=20)
             self.newDetectionButton.pack()
-            self.closeButton = Button(self.mainWindow, text="Exit", command=self.closeMainWindow)
+            self.closeButton = Button(self.tab1, text="Exit", command=self.closeMainWindow, width=20)
             self.closeButton.pack()
             super().insertWidgets(self.itmLogoWindowImage)
             self.mainWindow.mainloop()
         elif result == 5:
             print(result)
             super().makePrediction("Number two detected","The second number",secondaryWindowImage,self.configuredImage)
-            self.newDetectionButton = Button(self.mainWindow, text="New detection", command=self.cleanMainWindow)
+            self.newDetectionButton = Button(self.tab1, text="New detection", command=self.cleanMainWindow, width=20)
             self.newDetectionButton.pack()
-            self.closeButton = Button(self.mainWindow, text="Exit", command=self.closeMainWindow)
+            self.closeButton = Button(self.tab1, text="Exit", command=self.closeMainWindow, width=20)
             self.closeButton.pack()
             super().insertWidgets(self.itmLogoWindowImage)
             self.mainWindow.mainloop()
@@ -149,4 +206,4 @@ class DetectDiseaseWindow(LogicWindowManager):
 
 # We create an instance of our class
 if __name__ == "__main__":
-    DetectDiseaseWindow(Tk())
+    DetectDiseaseWindow(mainWindow=Tk())
