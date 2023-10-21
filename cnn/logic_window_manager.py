@@ -3,7 +3,7 @@
 import cv2
 import tkinter
 from tkinter import filedialog as fd
-from PIL import ImageTk, Image
+from PIL import Image, ImageTk
 from tkinter import Label, Button, Text, Toplevel
 
 
@@ -87,3 +87,12 @@ class LogicWindowManager:
             text = Text(secondaryWindow, width=40, height=12)
             text.insert(tkinter.END, secondText)
             text.grid(row=1, column=1)
+
+    #Method for show the result images
+    def showImagesResult(self, imagePath, windowTitle):
+        curveWindow = Toplevel()
+        curveWindow.wm_title(windowTitle)
+        image = ImageTk.PhotoImage(Image.open(imagePath))
+        curveLabel = Label(curveWindow, image=image)
+        curveLabel.photo = image
+        curveLabel.pack()
