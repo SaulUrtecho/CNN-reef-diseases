@@ -3,11 +3,12 @@ import tensorflow as tf
 from keras.preprocessing.image import load_img, img_to_array
 from keras.models import load_model
 from keras.initializers import glorot_uniform
-from tkinter import Tk, Label, Button, ttk
+from tkinter import Tk, Label, Button, ttk, Toplevel, Text, INSERT
 import tkinter as tk
 import re
 from logic_window_manager import LogicWindowManager
 from os import path
+import pandas as pd
 
 
 # Image size used
@@ -20,6 +21,8 @@ weightsPath = "/home/saul/Documents/CNN-reef-diseases/cnn/model/weights.h5"
 testImagesPath = "/home/saul/Documents/CNN-reef-diseases/cnn/test_images"
 curvesPath = '/home/saul/Documents/CNN-reef-diseases/cnn/model/results_graph.png'
 matrixPath = '/home/saul/Documents/CNN-reef-diseases/cnn/metrics/Confusion_matrix.png'
+xlsxPath = '/home/saul/Documents/CNN-reef-diseases/cnn/model/results.xlsx'
+textPath = '/home/saul/Documents/CNN-reef-diseases/cnn/metrics/Scores.txt'
 count = 0  # With this count we manage the elimination of select another image button
 
 
@@ -33,13 +36,16 @@ class DetectDiseaseWindow(LogicWindowManager):
         style.theme_use('clam')
         style.map('TNotebook.Tab', background=[('selected', 'gold1'), ('!selected', 'gold3')])
         self.tabManager = ttk.Notebook(self.mainWindow)
-        self.tab1 = tk.Frame(self.tabManager, bg='firebrick4')
-        self.tab2 = tk.Frame(self.tabManager, bg='firebrick4')
+        self.tab1 = tk.Frame(self.tabManager, bg='firebrick4', highlightbackground='gold1', highlightthickness=4)
+        self.tab2 = tk.Frame(self.tabManager, bg='firebrick4', highlightbackground='gold1', highlightthickness=4)
+        self.tab3 = tk.Frame(self.tabManager, bg='firebrick4', highlightbackground='gold1', highlightthickness=4)
         self.tabManager.add(self.tab1, text='Testing')
         self.tabManager.add(self.tab2, text='Results about model')
+        self.tabManager.add(self.tab3, text='About')
         self.tabManager.pack(expand=1, fill="both")
         self.firstTabWidgets()
         self.secondTabWidgets()
+        self.thirdTabWidgets()
         self.mainWindow.mainloop()
 
     # we define the initial widgets for first tab
@@ -79,6 +85,11 @@ class DetectDiseaseWindow(LogicWindowManager):
         self.itmLogoSecondTab = Label(self.tab2, image=self.logoSecondTab)
         self.itmLogoSecondTab.pack(side="bottom")
 
+    def thirdTabWidgets(self):
+        self.recordsLabel = Label(self.tab3, text="Version: 1.0.0\nLaguage: python 3.10.2\nTensorflow: 2.8.0\nKeras: 2.8.0\nOS: Ubuntu 22.04.3 LTS\nCodename: jammy\nDeveloper: saúl urtecho\nemail: saul.urtecho93@gmail.com\ngithub: https://github.com/SaulUrtecho", bg='firebrick4')
+        self.recordsLabel.config(fg='white')
+        self.recordsLabel.place(x=175, y=150)
+
     def showCurves(self):
         super().showImagesResult(curvesPath, 'Loss & accuracy curves')
 
@@ -86,10 +97,36 @@ class DetectDiseaseWindow(LogicWindowManager):
         super().showImagesResult(matrixPath, 'Confusion matrix')
 
     def showTrainingRecords(self):
-        pass
+        global xlsxPath
+        xlsxWindow = Toplevel()
+        xlsxWindow.geometry('1100x350')
+        xlsxWindow.wm_title('Records per epoch')
+        xlsxFrame = tk.Frame(xlsxWindow, pady=35)
+        xlsxFrame.pack(pady=20)
+        self.treeView = ttk.Treeview(xlsxFrame)
+        xlsxPath = r'{}'.format(xlsxPath)
+        df = pd.read_excel(xlsxPath)
+        self.treeView["column"] = list(df.columns)
+        self.treeView["show"] = "headings"
+        for col in self.treeView["column"]:
+            self.treeView.heading(col, text=col)
+        df_rows = df.to_numpy().tolist()
+        for row in df_rows:
+            self.treeView.insert("", "end", values=row)
+        self.treeView.pack()
+
 
     def showFinalResults(self):
-        pass
+        global textPath
+        resultsWindow = Toplevel()
+        resultsWindow.geometry("400x300+300+150")
+        resultsWindow.wm_title("Final results")
+        resultFrame = tk.Frame(resultsWindow, pady=35)
+        resultFrame.pack(pady=20)
+        text = Text(resultFrame, width=40, height=12)
+        with open(textPath, 'r') as f:
+            text.insert(INSERT, f.read())
+        text.pack(fill="none", expand=1)
 
     # Select image method
     def selectImage(self):

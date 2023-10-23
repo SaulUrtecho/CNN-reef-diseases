@@ -15,6 +15,7 @@
         "labelpad",
         "labelsize",
         "openpyxl",
+        "pady",
         "relu",
         "saul",
         "softmax",

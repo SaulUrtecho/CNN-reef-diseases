@@ -143,6 +143,7 @@ val_l = 4
 lss = 5
 
 for accu, vala, vals, loss in zip(acc, valAccuracy, valLoss, loss):
+    hoja.cell(row=1, column=1, value="Epochs")
     hoja.cell(row=1, column=2, value="Accuracy")
     hoja.cell(row=1, column=3, value="Val_accuracy")
     hoja.cell(row=1, column=4, value="Val_loss")
