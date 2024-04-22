@@ -1,0 +1,6 @@
+to activate a virtual env type the next command:
+
+    source env/bin/activate
+
+to deactivate just type:
+    deactivate
