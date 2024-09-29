@@ -86,7 +86,7 @@ class DetectDiseaseWindow(LogicWindowManager):
         self.itmLogoSecondTab.pack(side="bottom")
 
     def thirdTabWidgets(self):
-        self.recordsLabel = Label(self.tab3, text="Version: 1.0.0\nLaguage: python 3.10.12\nTensorflow: 2.8.0\nKeras: 2.8.0\nOS: Ubuntu 22.04.3 LTS\nCodename: jammy\nDeveloper: saúl urtecho\nemail: saul.urtecho93@gmail.com\ngithub: https://github.com/SaulUrtecho", bg='firebrick4')
+        self.recordsLabel = Label(self.tab3, text="Version: 1.0.0\nLanguage: python 3.10.12\nTensorflow: 2.8.0\nKeras: 2.8.0\nOS: Ubuntu 22.04.5 LTS\nCodename: jammy\nDeveloper: saúl urtecho\nemail: saul.urtecho93@gmail.com\ngithub: https://github.com/SaulUrtecho", bg='firebrick4')
         self.recordsLabel.config(fg='white')
         self.recordsLabel.place(x=175, y=150)
 
